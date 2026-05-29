@@ -71,10 +71,9 @@ const sendOtp = async (req, res) => {
     voter.otpExpiry = otpExpiry;
     await voter.save();
 
-    // Send email
-    await transporter.sendMail({
-      from:    `"Secure E-Voting System" <${process.env.EMAIL_USER}>`,
-      to:      voter.email,
+    // Send email via Resend
+    await sendEmail({
+      to: voter.email,
       subject: '🗳️ Your E-Voting OTP',
       html: `
         <div style="font-family:Arial,sans-serif;max-width:500px;margin:auto;padding:24px;border:1px solid #e0e0e0;border-radius:8px;">
@@ -88,6 +87,7 @@ const sendOtp = async (req, res) => {
           <p style="color:#888;font-size:12px;">If you did not request this, please ignore this email.</p>
         </div>`,
     });
+
 
     res.json({ success: true, message: `OTP sent to ${voter.email}` });
   } catch (error) {
